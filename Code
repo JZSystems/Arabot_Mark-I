@@ -1,0 +1,206 @@
+/*
+Mk I
+  Codename: Arabot (en proceso de cambio)
+  Código recopilado y probado por @JZSystems,
+  las librerías pertenecen a sus respectivos propietarios.
+
+App para control (Android): bit.ly/2DBZR19
+
+    (ignorar de todos modos, solo es un llenado simbólico)
+*/
+
+#include <Servo.h> //Inclusión de librería "Servo".
+
+Servo fl;//0
+Servo fr;//180
+Servo bl;//0
+Servo br;//180
+
+String readString;
+/*
+ Conectar módulo Bluetooth en los pines 0 y 1 del Arduino, 
+ el Tx del módulo al Rx (pin 0), y el Rx del módulo al Tx (pin 1) del Arduino.
+
+ Desconectar pines al cargar el programa, de lo contrario, la carga al Arduino fallará.
+ */
+void setup() {
+  Serial.begin(9600);
+  fl.attach(5);  //Conectar a motor frontal izquierdo, en pin PWM 5.
+  fr.attach(6);  //Conectar a motor frontal derecho, en pin PWM 6.
+  bl.attach(10); //Conectar a motor trasero izquierdo, en pin PWM 10.
+  br.attach(11); //Conectar a motor trasero derecho, en pin PWM 11.
+
+  fl.write(90);
+  fr.write(90);
+  bl.write(90);
+  br.write(90);
+  delay(1000);
+}
+
+void loop()
+{
+  while (Serial.available()) {
+    delay(3);
+    char c = Serial.read();
+    readString += c;
+  }
+  if (readString.length() > 0) {
+    Serial.println(readString);
+    if (readString == "f")       // Si lee "f"...
+    {
+      forward();                 // ...avanza hacia adelante.
+    }
+    if (readString == "b")       // Si lee "b"...
+    {
+      backward();                // ...avanza hacia atrás.
+    }
+    if (readString == "l")       // Si lee "l"...
+    {
+      left();                    // ...gira a la izquierda.
+    }
+    if (readString == "r")       // Si lee "r"...
+    {
+      right();                   // ...gira a la derecha.
+    }
+    if (readString == "s")       // Si lee "s"...
+    {
+      normalpos();               // ...ir a la posición normal.
+    }
+    if (readString == "ledon")
+    {
+      sleep();
+    }
+    if (readString == "ledoff")
+    {
+      normalpos();
+    }
+    readString = "";
+  }
+}
+void forward() // Avanzar hacia adelante.
+{
+  fr.write(180);
+  delay(250);
+  fl.write(0);
+  delay(250);
+  br.write(180);
+  delay(250);
+  bl.write(0);
+  delay(250);
+
+  fr.write(60);
+  fl.write(130);
+  br.write(60);
+  bl.write(130);
+  delay(250);
+
+  fr.write(90);
+  delay(250);
+  fl.write(90);
+  delay(250);
+  br.write(90);
+  delay(250);
+  bl.write(90);
+}
+
+void backward() // Avanzar hacia atrás.
+{
+  bl.write(180);
+  delay(250);
+  br.write(0);
+  delay(250);
+  fl.write(180);
+  delay(250);
+  fr.write(0);
+  delay(250);
+
+  bl.write(60);
+  br.write(130);
+  fl.write(60);
+  fr.write(130);
+  delay(250);
+
+  bl.write(90);
+  delay(250);
+  br.write(90);
+  delay(250);
+  fl.write(90);
+  delay(250);
+  fr.write(90);
+}
+
+void left() // Girar a la izquierda.
+{
+  fr.write(180);
+  delay(250);
+  fl.write(180);
+  delay(250);
+  br.write(180);
+  delay(250);
+  bl.write(180);
+  delay(250);
+
+  fr.write(60);
+  fl.write(60);
+  br.write(60);
+  bl.write(60);
+  delay(250);
+
+  fr.write(90);
+  delay(250);
+  fl.write(90);
+  delay(250);
+  br.write(90);
+  delay(250);
+  bl.write(90);
+}
+
+void right() // Girar a la derecha.
+{
+  br.write(0);
+  delay(250);
+  bl.write(0);
+  delay(250);
+  fr.write(0);
+  delay(250);
+  fl.write(0);
+  delay(250);
+
+  br.write(130);
+  bl.write(130);
+  fr.write(130);
+  fl.write(130);
+  delay(250);
+
+  br.write(90);
+  delay(250);
+  bl.write(90);
+  delay(250);
+  fr.write(90);
+  delay(250);
+  fl.write(90);
+}
+
+void sleep()      // Posición de descanso, no disponible desde la app.
+{
+  fl.write(0);
+  fr.write(180);
+  bl.write(180);
+  br.write(0);
+}
+
+void normalpos() // Posición normal del motor.
+{
+  fr.write(90);
+  br.write(90);
+  fl.write(90);
+  bl.write(90);
+}
+
+/*
+           _                        
+       .__(.)< (~fin del código~)
+        \___)   
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+ 
+ */
